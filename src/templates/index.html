@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Image Compression using PCA</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Image Compression using PCA</h1>
+        </header>
+        
+        <main>
+            <section class="upload-section">
+                <form action="/upload" method="POST" enctype="multipart/form-data">
+                    {% if fileName == None %}
+                    <div class="input-group">
+                        <label for="file-input">Upload Image</label>
+                        <input type="file" id="file-input" name="uploaded-image" accept="image/*">
+                    </div>
+                    {% else %}
+                    <div class="file-info">
+                        <span>Uploaded: {{ fileName }}</span>
+                    </div>
+                    {% endif %}
+                    
+                    <div class="input-group">
+                        <label for="compression-rate">Compression Rate / Komponen Utama Gambar yang Ingin Disimpan (%)</label>
+                        <input type="number" id="compression-rate" name="compression-rate" 
+                               value="{{ persenKompresi }}" min="0" max="100">
+                    </div>
+                    
+                    <button type="submit" class="btn-primary">Compress</button>
+                </form>
+            </section>
+
+            <section class="results-section">
+                <div class="image-comparison">
+                    <div class="image-card">
+                        <h3>Original</h3>
+                        {% if byteImage %}
+                            <img src="{{ byteImage }}" alt="Original image">
+                            <p class="size-info">{{ sizeBefore }} KB</p>
+                        {% else %}
+                            <div class="placeholder">No image</div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="image-card">
+                        <h3>Compressed</h3>
+                        {% if byteImageCompressed %}
+                            <img src="{{ byteImageCompressed }}" alt="Compressed image">
+                            <p class="size-info">{{ sizeAfter }} KB</p>
+                        {% else %}
+                            <div class="placeholder">No image</div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                {% if byteImageCompressed %}
+                <div class="stats">
+                    <div class="stat-item">
+                        <span class="label">Pixel Difference:</span>
+                        <span class="value">{{ pixelDifference }}%</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="label">Compression Time:</span>
+                        <span class="value">{{ compressionTime }}s</span>
+                    </div>
+                </div>
+
+                <div class="actions">
+                    <form action="/save" method="POST" style="display:inline;">
+                        <button type="submit" class="btn-secondary">Download</button>
+                    </form>
+                    <form action="/remove" method="POST" style="display:inline;">
+                        <button type="submit" class="btn-secondary">Remove</button>
+                    </form>
+                </div>
+                {% endif %}
+            </section>
+        </main>
+    </div>
+</body>
+</html>
